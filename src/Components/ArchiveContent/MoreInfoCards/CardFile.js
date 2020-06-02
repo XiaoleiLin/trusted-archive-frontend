@@ -2,38 +2,34 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Container from "@material-ui/core/Container";
-import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router-dom'
-import red from '@material-ui/core/colors/red';
-import grey from "@material-ui/core/colors/grey";
 import Grid from '@material-ui/core/Grid';
-import {withStyles} from "@material-ui/core/styles";
-import PropTypes from 'prop-types';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf'; //firmar si es pdf
 import GifIcon from '@material-ui/icons/Gif';
 import Button from '@material-ui/core/Button';
+import CreateIcon from '@material-ui/icons/Create';
+import GestureIcon from '@material-ui/icons/Gesture';
+import ButtonBase from '@material-ui/core/ButtonBase';
+
 import ViewPdf from './ViewerPdf'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    background: '#0091ea',
-    height: '10vw',
-    color: 'white',
-
+    overflow: 'hidden',
+    padding: theme.spacing(0, 3),
   },
   paper: {
+    maxWidth: 400,
+    margin: `${theme.spacing(1)}px auto`,
     padding: theme.spacing(2),
-    margin: 'auto',
-    maxWidth: 500,
   },
   image: {
-    width: 48,
-    height: 48,
+    width: 144,
+    height: 144,
   },
   img: {
     margin: 'auto',
@@ -43,62 +39,131 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
+function ContentGif(props) {
+  const classes = useStyles()
+  return (
+    <Grid item xs={12} sm container direction="column" spacing={2}>
+      <Grid item container direction="row">
+        <Grid container wrap="nowrap" spacing={2}>
+          <Grid item>
+            <GifIcon fontSize="large"/>
+          </Grid>
+          <Grid item xs>
+            <Typography gutterBottom variant="subtitle1">
+              {props.title}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+      
+      <Grid item container direction="row">
+        <Grid container wrap="nowrap" spacing={2}>
+            <Grid item>
+              <ButtonBase className={classes.image}>
+                <img className={classes.img} alt="complex" src={props.data.url} />
+              </ButtonBase>
+            </Grid>
+          <Grid item xs>
+            <Typography variant="body2" gutterBottom>
+              Name: {props.data.filename.substring(0, props.data.filename.length-4)}
+            </Typography>
+            <Typography variant="body2" gutterBottom color="textPrimary" style={{ wordWrap: "break-word" }}>
+              Hash: {props.data.hash_value}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  )
+}
+function ContentPDF(props) {
+  return (
+    <Grid item xs={12} container direction="column" spacing={2}>
+      <Grid item container direction="row">
+        <Grid container wrap="nowrap" spacing={2}>
+          <Grid item>
+            {props.data.filetype === "pdf"? 
+            <PictureAsPdfIcon/>
+            :
+            <GifIcon fontSize="large"/>}
+          </Grid>
+          <Grid item>
+            <Typography gutterBottom variant="subtitle1">
+              {props.title} 
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+      
+      <Grid container wrap item direction="row">
+        <Grid item xs  style={{ wordWrap: "break-word" }} spacing={2}>
+          <Typography variant="body2" gutterBottom>
+            Name: {props.data.filename.substring(0, props.data.filename.length-4)}
+          </Typography>
+          <Typography variant="body2" gutterBottom color="textPrimary" >
+            Hash: {props.data.hash_value}
+          </Typography>
+          {
+          props.data.filetype === "pdf"? 
+          <Typography variant="body2" gutterBottom color="textPrimary">
+            Signature: {props.data.signature === "none"? "Unsigned": "Signed"}
+          </Typography>
+          : null
+          }
+        </Grid>
+      </Grid>
+    </Grid>
+  )
+}
 
 function CardInfoFile(props) {
   const classes = useStyles();
   return (
-    <Card >
+    <Card>
       <CardContent>
         <Grid container spacing ={2}>
-          <Grid item xs={12} sm container>
-            <Grid item xs={9} container direction="column" spacing={2}>
-              <Grid item>
-                <Typography gutterBottom variant="subtitle1" style={{ cursor: 'pointer' }}>
-                  {props.data.format === "pdf"? <PictureAsPdfIcon/> : <GifIcon/>}  {props.title} 
-                </Typography>
-              </Grid>
-              <Grid item xs>
-                <Typography variant="body2" gutterBottom>
-                  Name: {props.data.name}
-                </Typography>
-                <Typography variant="body2" gutterBottom color="textPrimary">
-                  {/* Hash512: el Hash512 */}
-                  Hash 512: {props.data.hash512}
-                </Typography>
-                <Typography variant="body2" gutterBottom color="textPrimary">
-                  Signature: {props.data.signature === "none"? "Unsigned": "Signed"}
-                </Typography>
-              </Grid>
-            </Grid>
-            {/* <Grid item xs={3} container direction="row" spacing={2}> */}
-            
-          </Grid>
-          <Grid>
+          {props.data.filetype === "pdf"?
+          ContentPDF(props)
+          :
+          ContentGif(props)
+          }
+
+          <Grid item container direction="row" spacing={2}>
+            {props.data.filetype === "pdf"?
+            <Grid item>
               <ViewPdf url = {props.data.url} />
+            </Grid>
+            : null
+            }
+            <Grid item>
               <Button
                 variant="contained"
                 color="default"
-                // href={props.data.url}
+                href={props.data.url}
                 // download="sothing.pdf" 
                 className={classes.button}
                 startIcon={<CloudDownloadIcon/>}
-                onClick= {() => window.open(props.data.url)}
+                // onClick= {() => window.open(props.data.url)}
               >
                 Download
               </Button>
-              {props.data.format === "pdf"? 
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  className={classes.button}
-                  startIcon={<PictureAsPdfIcon />}
-                >
-                  Sign
-                </Button>
-                : null
+            </Grid>
+            <Grid item>
+              {props.data.filetype === "pdf"? 
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.button}
+                startIcon={<CreateIcon/>}
+                disabled= {props.data.signature !== "none"? true: false}
+              >
+                {props.data.signature !== "none"? "Signed" : "Sign"}
+              </Button>
+              : null
               }
             </Grid>
+          </Grid>
+
         </Grid>
       </CardContent>
     </Card>

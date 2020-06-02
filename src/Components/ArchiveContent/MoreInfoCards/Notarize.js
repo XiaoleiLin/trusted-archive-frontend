@@ -47,17 +47,10 @@ export default function CircularIntegration(props) {
   const classes = useStyles();
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-  const timer = React.useRef();
 
   const buttonClassname = clsx({
     [classes.buttonSuccess]: success,
   });
-
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
 
   async function notarize() {
     let data = await ServiceArchive.notarize(props.keyObject)
@@ -70,10 +63,6 @@ export default function CircularIntegration(props) {
     if (!loading) {
       setSuccess(false);
       setLoading(true);
-    //   timer.current = setTimeout(() => {
-    //     setSuccess(true);
-    //     setLoading(false);
-    //   }, 2000);
       notarize()
     }
   };

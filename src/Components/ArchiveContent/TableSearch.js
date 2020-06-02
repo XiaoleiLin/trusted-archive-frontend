@@ -2,12 +2,9 @@ import React from "react";
 import MUIDataTable from "mui-datatables";
 import { withRouter } from "react-router-dom";
 import { CircularProgress, Typography, createMuiTheme, MuiThemeProvider } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 
 import { toDataTable } from './Utils';
 import { ServiceArchive } from "../../Services/ServiceArchive";
-
-import { RepeatOneSharp } from "@material-ui/icons";
 
 
 class TableSearch extends React.Component {
@@ -27,13 +24,6 @@ class TableSearch extends React.Component {
     componentDidUpdate (prevProps, prevState, snapshot) {
         if(this.props.dateStart !== prevProps.dateStart || this.props.dateEnd !== prevProps.dateEnd)
             this.getData();
-
-        // if(this.state.data !== [] && !this.state.isLoading){
-        //     this.getData();
-        // }
-            
-        // if (this.state.selected !== prevState.selected && this.state.selected !== null)
-        //     this.props.parentCallback (this.state.selected)
     }
 
     async getData () {
@@ -41,12 +31,10 @@ class TableSearch extends React.Component {
         let body = {
             "dataStart": this.props.dateStart,
             "dataEnd": this.props.dateEnd,
-            "value": ""
+            // "value": ""
         }
         let response = await ServiceArchive.search(body)
         let data = toDataTable(response.list);
-        // let data = toDataTable(searchResultMockup.list)
-
         this.setState({ data: data, isLoading: false});
     }
 
@@ -65,7 +53,7 @@ class TableSearch extends React.Component {
         let month = new Date(splits[0],months[splits[1]]).toLocaleString ('en', {month: 'long'})
         return (
             <div>
-                {month} / {splits[0]} 
+                {splits[0]} / {month} 
             </div>
         )
     }
@@ -86,10 +74,10 @@ class TableSearch extends React.Component {
             expandableRowsOnClick: true,
             // responsive: 'scrollMaxHeight',
             responsive: 'scrollFullHeight',
-            fixedHeaderOptions: {
-                xAxis: false,
-                yAxis: true
-            },
+            // fixedHeaderOptions: {
+            //     xAxis: false,
+            //     yAxis: true
+            // },
             onRowClick: this.handleRowClick,
         };
         const theme = createMuiTheme({
@@ -110,7 +98,7 @@ class TableSearch extends React.Component {
                 <MuiThemeProvider theme={theme}>
                     <MUIDataTable title={<Typography variant="title">
                         {!this.props.dateStart?
-                        "No date selected"
+                        "Select Date"
                         :
                         this.toDate()
                         }

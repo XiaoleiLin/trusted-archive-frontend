@@ -11,9 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Button from '@material-ui/core/Button';
 
 import TableSearch from './ArchiveContent/TableSearch';
 import MenuMultiLevel from './ArchiveContent/MenuTree';
@@ -69,18 +67,21 @@ class Archive extends Component {
   }
 
   componentDidMount(){
-    this.getData();
+    this.getData()
+    let date = new Date(Date.now())
+    let start = date.toLocaleString('en', {year:'numeric'}) +
+     "/" + date.toLocaleString ('en', {month: 'short'})
+    this.setState({dateSelected: start})
   }
 
   async getData () {
     let body = {
-        "dataStart":"",
-        "dataEnd": "",
-        "value": "dates"
+        // "dataStart":"",
+        // "dataEnd": "",
+        // "value": "dates"
     }
     let response = await ServiceArchive.search(body)
     let data = toDateMenu(response.list)
-    // let data = toDateMenu(listMonth.list)
     this.setState({ dataMenu: data})
   }
 
@@ -121,7 +122,7 @@ class Archive extends Component {
               <ListItemIcon>
                 {this.state.archive ? <UnarchiveIcon /> : < ArchiveIcon/>}
               </ListItemIcon>
-              <ListItemText primary="My Archives" />
+              <ListItemText primary="My Archives"/>
             </ListItem>
             <Collapse in={this.state.archive} timeout="auto" unmountOnExit>
               <MenuMultiLevel dataMenu={this.state.dataMenu} parentCallback = {this.callbackMenuMultiLevel}/>

@@ -18,17 +18,6 @@ class UploadProgress extends Component {
     }
 
     componentDidUpdate (prevProps, prevState, snapshot) {
-        // console.log(this.state)
-        // let complete = true
-        // for (var [key,value] of Object.entries(this.props.progress)){
-        //     if (value < 100) complete = false
-        // }
-
-        // if (complete === true && prevState.allComplete === false) 
-        //     this.setState({allComplete: complete})
-
-        // if (this.state.allComplete && this.state.hideTime === null)
-        //     this.setState({hideTime:6000})
     }
 
     handleClose (event, reason) {
@@ -59,7 +48,6 @@ class UploadProgress extends Component {
         return table
     }
     render() {
-        let {progress} = this.props
         return (
             <div>
                 <Snackbar

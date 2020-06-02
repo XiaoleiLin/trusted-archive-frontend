@@ -11,7 +11,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Cookies from 'js-cookie';
 
-//var createHistory = require ("history").createBrowserHistory;
+import { ServiceArchive } from "../Services/ServiceArchive";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,26 +40,25 @@ function ButtonAppBar(props) {
 
   const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
-  };
+  }
 
-  const handleClose = () => {
+  const closeSession = () => {
       logout();
       setAnchorEl(null);
-  };
+  }
 
-  const handleClose2 = () => {
+  const handleClose = () => {
     setAnchorEl(null);
-};
+  }
 
-  const logout =  () => {
+  const logout =  async () => {
+    // let res = await ServiceArchive.aboutMe()
+    // if(res.authn_details.directSso === "false") await ServiceArchive.logout()
+    if(props.canLogout) await ServiceArchive.logout()
     Cookies.remove('access_token')
     Cookies.remove('expires_token')
     Cookies.remove('tenant')
-    props.history.push("/login");
-  };
-  
-  const moveHome = () => {
-      props.history.push("/" + Cookies.get('tenant') + "/home");
+    props.history.push("/logout")
   }
 
   return (
@@ -66,9 +66,10 @@ function ButtonAppBar(props) {
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-            <Typography button='true' variant="h6" className={classes.title} onClick={moveHome}>
+            <Typography button='true' variant="h6" className={classes.title}>
                 Trusted Archive
             </Typography>
+
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
@@ -76,7 +77,7 @@ function ButtonAppBar(props) {
                 onClick={handleMenu}
                 color="inherit"
             >
-                <AccountCircle />
+                <ExitToAppIcon />
             </IconButton>
             <Menu
                 id="menu-appbar"
@@ -91,11 +92,10 @@ function ButtonAppBar(props) {
                     horizontal: 'right',
                 }}
                 open={open}
-                onClose={handleClose2}
+                onClose={handleClose}
             >
-                <MenuItem>My account</MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <ExitToAppIcon/>
+                <MenuItem onClick={closeSession}>
+                    Exit
                 </MenuItem>
             </Menu>
         </Toolbar>

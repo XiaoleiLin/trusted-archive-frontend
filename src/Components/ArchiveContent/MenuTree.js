@@ -10,8 +10,6 @@ import { withStyles } from '@material-ui/core/styles'
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import Skeleton from '@material-ui/lab/Skeleton';
 
-import { ServiceArchive } from "../../Services/ServiceArchive";
-import { toDateMenu } from "./Utils"
 
 const styles = {
   list: {
@@ -39,7 +37,6 @@ class MenuBar extends Component {
   }
   
   componentDidUpdate (prevProps, prevState, snapshot){
-    // if (prevState.selected !== this.state.selected) this.props.parentCallback (this.state.selected)
   }
 
 	updateSelected = (value, selectedIndex) => {
@@ -48,16 +45,13 @@ class MenuBar extends Component {
     this.props.parentCallback (selectedIndex)
   }
 
-  // this method sets the current state of a menu item i.e whether it is in expanded or collapsed or a collapsed state
   handleClick( item ) {
     this.setState( prevState => ( 
       { [ item ]: !prevState[ item ] } 
     ) )
   }
 
-  // if the menu item doesn't have any child, this method simply returns a clickable menu item that redirects to any location and if there is no child this method uses recursion to go until the last level of children and then returns the item by the first condition.
   handler( children ) {
-    const { classes } = this.props
     const { state } = this
     return children.map( ( subOption ) => {
       if ( !subOption.children ) {
@@ -109,9 +103,8 @@ class MenuBar extends Component {
   }
 
   render() {
-    const { classes } = this.props
     return (
-      <div className={ classes.list, {overflow: 'auto'} }>
+      <div>
         {this.props.dataMenu? 
         this.handler( this.props.dataMenu )
         :

@@ -2,15 +2,15 @@ export function toDataTable(dataJson) {
 
   let data = []
   dataJson.forEach(element => {
-    let date, name, hash, sig, format, blockchain
-
+    let name, hash, sig, format, blockchain //,date
+    // console.log(element)
     let splits = element.substring(9,element.length).split("__")
     let splits2 = splits[splits.length-1].split('.')
     
     //date = element.substring(0, 8)
-    name = splits[1].substring(5, splits[1].length)
+    name = splits[1].substring(9, splits[1].length-4)
     hash = splits[2].substring(5, splits[1].length) + "..."
-    splits[3] !== "sig-not" ? sig = "yes": sig = "no"
+    splits[3] === "sig-yes" ? sig = "yes": sig = "no"
     splits[4] === "eth-yes" || splits2[0] === "iota-yes" ? blockchain = "yes": blockchain = "no"
     format = splits2[1]
 
@@ -35,7 +35,6 @@ export function toDateMenu(date) {
     }
     
     let month = new Date(2020,months[splits[1]]).toLocaleString ('en', {month: 'long'})
-    // let month = new Date(element).toLocaleString ('en', {month: 'long'})
     let key = {id: element, name: month}
     data.find(el => el.id === splits[0]).children.push(key)
   });

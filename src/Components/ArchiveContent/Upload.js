@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import jsSHA from 'jssha'
-import axios from 'axios'
 import { DropzoneDialog } from "material-ui-dropzone"
 import Button from '@material-ui/core/Button'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 import { ServiceArchive } from "../../Services/ServiceArchive"
 import UploadProgress from "./UploadProgress"
-import { Chip } from '@material-ui/core'
 
 
 class Upload extends Component {
@@ -31,6 +29,9 @@ class Upload extends Component {
     }
 
     onDelete (deletedFile) {
+        let meta = this.state.metadata
+        delete meta[deletedFile.name]
+        this.setState({metadata: meta})
     }
 
     callbackFinish = (finish) => {
@@ -67,10 +68,10 @@ class Upload extends Component {
         let parent = this
         var xhr = new XMLHttpRequest()
         xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState === 4 && this.status === 200) {
                 let splits = new URL(response.url).pathname.split("/")
                 let keyObject = splits[3] + "/" + splits[4] + "/" + splits[5]
-                let verify = ServiceArchive.verifySign(keyObject)
+                if(file.type === "application/pdf") ServiceArchive.verifySign(keyObject)
             }
         }
         xhr.upload.onprogress = function (progressEvent) {
@@ -80,17 +81,17 @@ class Upload extends Component {
             parent.setState({progress: progress})
         }
         xhr.open("PUT", response.url, true)
-        xhr.setRequestHeader( 'Content-Type', 'application/pdf')
+        xhr.setRequestHeader( 'Content-Type', file.type)
+        xhr.setRequestHeader('Content-Disposition', "attachment; filename=testeando.pdf")
         let data = new FormData()
         data.append('file', file)
-
-        xhr.send(data);
+        xhr.send(file)
+        // xhr.send(data);
     }
 
     render(){
         return (
             <div>
-
                 <Button
                     variant="contained" 
                     color="primary" 
@@ -101,21 +102,24 @@ class Upload extends Component {
                 </Button>
                 <DropzoneDialog
                     acceptedFiles={['image/gif', 'application/pdf']}
-                    cancelButtonText={"cancel"}
-                    submitButtonText={"submit"}
                     maxFileSize={50000000}
+                    filesLimit = {10}
                     open={this.state.open}
-                    onClose={() => this.setState({open: false})}
+                    onClose={() => this.setState({open: false, metadata: {}})}
                     onSave={(files) => {
                         files.forEach(element => this.uploadFile(element))
                         this.setState({open: false})
                     }}
-                    showPreviews={true}
-                    showFileNamesInPreview={true}
-                    showAlerts = {false}
                     onChange={ (loadedFiles) => this.onChange(loadedFiles)}
                     onDelete= { (deletedFile) => this.onDelete(deletedFile)}
-
+                    showPreviews={true}
+                    showAlerts = {false}
+                    cancelButtonText="cancel"
+                    submitButtonText="submit"
+                    previewText = "Files:"
+                    maxWidth = "sm"
+                    fullWidth = {true}
+                    useChipsForPreview = {true}
                 />
                 {
                 Object.keys(this.state.progress).length !== 0? 

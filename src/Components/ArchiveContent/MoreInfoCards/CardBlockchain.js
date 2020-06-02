@@ -2,17 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Container from "@material-ui/core/Container";
-import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withRouter } from 'react-router-dom'
-import red from '@material-ui/core/colors/red';
-import grey from "@material-ui/core/colors/grey";
 import Grid from '@material-ui/core/Grid';
-import {withStyles} from "@material-ui/core/styles";
-import PropTypes from 'prop-types';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import Button from '@material-ui/core/Button';
@@ -21,7 +13,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { ServiceArchive } from "../../../Services/ServiceArchive";
 import CircularIntegration from "./Notarize"
 
 const useStyles = makeStyles((theme) => ({
@@ -67,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
 function NetworksExpansionPanel(eth, iota, classes) {
   return (
     <div className={classes.root}>
-      {eth? ethereum (eth, classes):<div></div>}
-      {iota? iotaFunction (iota, classes) : <div></div>}
+      {eth? ethereum (eth, classes):null}
+      {iota? iotaFunction (iota, classes):null}
     </div>
   );
 }
@@ -84,56 +75,53 @@ function ethereum (eth, classes) {
             id="panel1a-header"
           >
             <Typography className={classes.heading}>
-              Ethereum network
+              Ethereum Network
             </Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm container>
-                <Grid item xs={11} container direction="column" spacing={2}>
-                  <Typography variant="body2" gutterBottom color="textPrimary">
-                    Transaction: {eth.txHash}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom color="textPrimary">
-                    From: {eth.from}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom color="textPrimary">
-                    Notarized on the block: {eth.blockNumber}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom color="textPrimary">
-                    Timestamp: {new Date(+eth.timestamp*1000).toLocaleString()}
-                  </Typography>
-                </Grid>
-                {/* <Grid item xs={1}>
-                  <OpenInNewIcon className={classes.image}/> */}
-                <Grid>
-                  <Button
-                    variant="contained"
-                    color="primary" 
-                    size="small"
-                    className={classes.button}
-                    startIcon={<OpenInNewIcon />}
-                    onClick= {() => {window.open("https://ropsten.etherscan.io/tx/" + eth.txHash)}}
-                  >
-                    Open in external explore
-                  </Button>
-                </Grid>
+            <Grid container spacing={2} direction="column">
+              <Grid item>
+                <Typography variant="body2" gutterBottom color="textPrimary">
+                  Transaction: {eth.txHash}
+                </Typography>
+                {/* <Typography variant="body2" gutterBottom color="textPrimary">
+                  From: {eth.from}
+                </Typography> */}
+                <Typography variant="body2" gutterBottom color="textPrimary">
+                  Timestamp: {new Date(+eth.timestamp*1000).toLocaleString()}
+                </Typography>
+                <Typography variant="body2" gutterBottom color="textPrimary">
+                  Block: {eth.blockNumber}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary" 
+                  size="small"
+                  className={classes.button}
+                  startIcon={<OpenInNewIcon />}
+                  style={{ textTransform: 'none' }}
+                  onClick= {() => {window.open("https://ropsten.etherscan.io/tx/" + eth.txHash)}}
+                >
+                  Etherscan
+                </Button>
               </Grid>
             </Grid>
           </ExpansionPanelDetails>
         </ExpansionPanel>
         :
-        <ExpansionPanel>
+        <ExpansionPanel disabled>
           <ExpansionPanelSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
               <Typography className={classes.heading}>
-                Ethereum network
+                Ethereum Network
               </Typography>
               <Typography className={classes.secondaryHeading}>
-                No confirmado
+                No confirmed
               </Typography>
           </ExpansionPanelSummary>
         </ExpansionPanel>
@@ -146,59 +134,55 @@ function iotaFunction (iota, classes) {
   return (
     <div>
       {
-        // iota.confirmed?
-        iota?
+        iota.confirmed?
         <ExpansionPanel>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2a-content"
             id="panel2a-header"
           >
-            <Typography className={classes.heading}>IOTA network</Typography>
+            <Typography className={classes.heading}>IOTA Network</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm container>
-                <Grid item xs={11} container direction="column" spacing={2}>
-                  <Typography>
-                    <Typography variant="body2" gutterBottom color="textPrimary">
-                      Transaction: {iota.txHash}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom color="textPrimary">
-                      Timestamp: {new Date(+iota.timestamp*1000).toLocaleString()}
-                    </Typography>
+            <Grid container spacing={2} direction="column">
+              <Grid item>
+                <Typography>
+                  <Typography variant="body2" gutterBottom color="textPrimary">
+                    Transaction: {iota.txHash}
                   </Typography>
-                </Grid>
-                {/* <Grid item xs={1}> 
-                  <OpenInNewIcon className={classes.image}/> */}
-                <Grid>
-                  <Button
-                    variant="contained"
-                    color="primary" 
-                    size="small"
-                    className={classes.button}
-                    startIcon={<OpenInNewIcon />}
-                    onClick= {() => {window.open("https://thetangle.org/transaction/" + iota.txHash)}}
-                  >
-                    Open in external explore
-                  </Button>
-                </Grid>
+                  <Typography variant="body2" gutterBottom color="textPrimary">
+                    Timestamp: {new Date(+iota.timestamp*1000).toLocaleString()}
+                  </Typography>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary" 
+                  size="small"
+                  className={classes.button}
+                  startIcon={<OpenInNewIcon />}
+                  style={{ textTransform: 'none' }}
+                  onClick= {() => {window.open("https://thetangle.org/transaction/" + iota.txHash)}}
+                >
+                  TheTangle
+                </Button>
               </Grid>
             </Grid>
           </ExpansionPanelDetails>
         </ExpansionPanel>
         :
-        <ExpansionPanel>
+        <ExpansionPanel disabled>
           <ExpansionPanelSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
               <Typography className={classes.heading}>
-                IOTA network
+                IOTA Network
               </Typography>
               <Typography className={classes.secondaryHeading}>
-                No confirmado
+                No confirmed
               </Typography>
           </ExpansionPanelSummary>
         </ExpansionPanel>
@@ -217,16 +201,14 @@ function CardBlockchain(props) {
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>
               <Grid item>
-                <Typography gutterBottom variant="subtitle1" style={{ cursor: 'pointer' }}>
-                  {props.title} 
-                  <Divider/> 
-                  {props.eth || props.iota ? "This file is notarized in 2 networks": null}
+                <Typography gutterBottom variant="subtitle1">
+                  {props.title}
                 </Typography>
               </Grid>
               {(props.eth || props.iota) ?
                 NetworksExpansionPanel(props.eth, props.iota, classes)
                 :
-                <Grid item >
+                <Grid item container justify="center" alignItems="center">
                   <CircularIntegration 
                   parentCallback= {props.parentCallback}
                   keyObject = {props.keyObject}
